@@ -1,0 +1,38 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <title>Ratpack grooscript demo</title>
+  <meta name="description" content="">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <link rel="stylesheet" href="styles/animate.css">
+    <script src="lib/jquery-1.11.1.min.js"></script>
+
+</head>
+<body>
+    <div id="newFramework">
+        <p>Name:<input type="text" id="nameFramework"/>*</p>
+        <p>Url framework:<input type="text" id="urlFramework"/>*</p>
+        <p>Url image framework:<input type="text" id="urlImageFramework"/></p>
+        <input type="button" class="doButton" id="buttonAddFramework" value="Add framework"
+               data-anijs="if: mousedown, do: shake animated, to: #validationError"/>
+        <div id="validationError"></div>
+        <div id="mainTitle" data-anijs="if: mouseenter, do: tada animated">Groovy Frameworks</div>
+    </div>
+    <div>
+        ${model.frameworks}
+    </div>
+
+    <!-- build:js scripts/jquery.js -->
+    <script src="lib/anijs-min.js"></script>
+    <script src="lib/grooscript-all.js"></script>
+    <script src="scripts/FrameworksPresenter.js"></script>
+    <!-- endbuild -->
+    <script>
+        jQuery(document).ready(function() {
+            FrameworksPresenter().onLoad();
+        });
+    </script>
+</body>
+</html>

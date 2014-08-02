@@ -1,0 +1,69 @@
+body {
+    width: 100%;
+    margin: 0;
+    font-family: Lato;
+    font-size: 22px;
+}
+
+#newFramework {
+    padding-top: 1px;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    background-color: crimson;
+}
+
+input {
+    margin-left: 1em;
+    width: 300px;
+    font-family: Lato;
+    font-size: 22px;
+}
+
+.doButton {
+    margin-left: 0;
+    padding:5px 15px;
+    border:1 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+a {
+    text-decoration: none;
+}
+
+ul {
+    padding-left: 0px;
+}
+
+li {
+    padding-top: 10px;
+    width: 200px;
+    text-align: center;
+    list-style: none;
+    display: inline-block;
+}
+
+.logo {
+    padding-left: 25px;
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+}
+
+.logo img {
+    width: 100%;
+}
+
+#validationError {
+    color: black;
+    display: inline;
+}
+
+#mainTitle {
+    position: absolute;
+    top: 75px;
+    left: 600px;
+    font-family: Monaco;
+    font-size: 2em;
+}
