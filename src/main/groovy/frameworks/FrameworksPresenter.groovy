@@ -2,30 +2,29 @@ package frameworks
 
 import org.grooscript.asts.GsNative
 import org.grooscript.builder.HtmlBuilder
-import org.grooscript.jquery.Binder
 import org.grooscript.jquery.GQuery
+import org.grooscript.jquery.GQueryImpl
 
 /**
  * Created by jorge on 01/08/14.
  */
 class FrameworksPresenter {
 
-    def nameFramework
-    def urlFramework
-    def urlImageFramework
+    String nameFramework
+    String urlFramework
+    String urlImageFramework
     GQuery gQuery
 
-    def onLoad() {
-        def binder = new Binder()
-        gQuery = binder.gQuery
-        binder(this);
+    void onLoad() {
+        gQuery = new GQueryImpl()
+        gQuery.bindAll(this)
     }
 
     static String htmlFrameworks(List<Framework> frameworks) {
         HtmlBuilder.build {
             ul(id: 'listFrameworks') {
                 frameworks.each { framework ->
-                    yield htmlFramework(framework)
+                    yieldUnescaped htmlFramework(framework)
                 }
             }
         }
@@ -46,7 +45,7 @@ class FrameworksPresenter {
         }
     }
 
-    def buttonAddFrameworkClick() {
+    void buttonAddFrameworkClick() {
 
         def framework = new Framework(name: nameFramework, url: urlFramework, urlImage: urlImageFramework)
         def errors = framework.validate()
@@ -72,7 +71,7 @@ class FrameworksPresenter {
         AniJS.run();
     */}
 
-    def addFramework(Framework framework, Closure onAdded, Closure onError = null) {
+    void addFramework(Framework framework, Closure onAdded, Closure onError = null) {
         gQuery.doRemoteCall('/addFramework',
                 'POST', [name: framework.name, url: framework.url, urlImage: framework.urlImage],
                 onAdded, onError, Framework)

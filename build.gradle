@@ -1,46 +1,45 @@
 buildscript {
-  repositories {
-    jcenter()
-  }
-  dependencies {
-    classpath "io.ratpack:ratpack-gradle:0.9.7"
-    classpath "org.grooscript:grooscript-gradle-plugin:0.5"
-  }
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "io.ratpack:ratpack-gradle:0.9.18"
+        classpath 'org.grooscript:grooscript-gradle-plugin:1.2.0-SNAPSHOT'
+    }
 }
 
+apply plugin: 'org.grooscript.conversion'
 apply plugin: "io.ratpack.ratpack-groovy"
 apply plugin: "idea"
-apply plugin: "org.grooscript.conversion"
 
 repositories {
-  jcenter()
-  maven { url "http://repo.springsource.org/repo" } // for springloaded
+    jcenter()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
-    // SpringLoaded enables runtime hot reloading.
-    // It is not part of the app runtime and is not shipped in the distribution.
-    springloaded "org.springsource.loaded:springloaded:1.1.5.RELEASE"
+    runtime "org.slf4j:slf4j-simple:1.7.12"
+    compile('org.grooscript:grooscript:1.2.0-SNAPSHOT') {
+        exclude module: 'groovy'
+        exclude module: 'groovy-json'
+    }
+    compile ratpack.dependency("jackson-guice")
 
-    // Default SLF4J binding.  Note that this is a blocking implementation.
-    // See here for a non blocking appender http://logging.apache.org/log4j/2.x/manual/async.html
-    compile ratpack.dependency("jackson")
-
-    runtime 'org.slf4j:slf4j-simple:1.7.7'
-    compile 'org.grooscript:grooscript:0.5.2'
-
-    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
+    gradleVersion = '2.5'
 }
 
 grooscript {
     source = ['src/main/groovy/frameworks/FrameworksPresenter.groovy']
     destination = 'src/ratpack/public/scripts'
-    classPath = ['src/main/groovy']
-    convertDependencies = true
+    classpath = ['src/main/groovy']
+    includeDependencies = true
 }
 
-run.dependsOn thread
+run.dependsOn convertThread

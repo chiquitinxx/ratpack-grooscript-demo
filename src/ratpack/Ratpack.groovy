@@ -2,26 +2,27 @@ import frameworks.Framework
 import frameworks.FrameworksDb
 import frameworks.FrameworksPresenter
 import ratpack.form.Form
+import ratpack.jackson.guice.JacksonModule
+import ratpack.groovy.template.MarkupTemplateModule
 
-import static ratpack.groovy.Groovy.groovyTemplate
+import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
-import ratpack.jackson.JacksonModule
-
 import static ratpack.jackson.Jackson.json
 
 ratpack {
     bindings {
-        add new JacksonModule()
+        module JacksonModule
+        module MarkupTemplateModule
     }
 
     handlers {
         get {
-            render groovyTemplate("index.html",
-                    frameworks: FrameworksPresenter.htmlFrameworks(FrameworksDb.listFrameworks))
+            def list = FrameworksPresenter.htmlFrameworks(FrameworksDb.listFrameworks)
+            render groovyMarkupTemplate([frameworks: list], "index.gtpl")
         }
 
         post('addFramework') {
-            def framework = new Framework(parse(Form))
+            Framework framework = new Framework(parse(Form))
             def valErrors = framework.validate()
             if (!valErrors && FrameworksDb.addNewFramework(framework)) {
                 render json(framework)
@@ -29,7 +30,7 @@ ratpack {
                 render null
             }
         }
-        
-        assets "public"
+
+        files { dir "public" }
     }
 }

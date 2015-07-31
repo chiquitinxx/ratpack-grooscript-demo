@@ -1,3 +1,52 @@
+function Framework() {
+  var gSobject = gs.inherit(gs.baseClass,'Framework');
+  gSobject.clazz = { name: 'frameworks.Framework', simpleName: 'Framework'};
+  gSobject.clazz.superclass = { name: 'java.lang.Object', simpleName: 'Object'};
+  gSobject.name = null;
+  gSobject.url = null;
+  gSobject.urlImage = null;
+  gSobject.hasEvilChars = function(data) {
+    return (gs.bool(data) ? gs.mc(data,"indexOf",["<"]) >= 0 : false);
+  };
+  gSobject['hasImage'] = function(it) {
+    return (gs.bool(gSobject.urlImage)) && (gs.mc(gs.list([".GIF" , ".PNG" , ".JPG"]),"any",[function(it) {
+      return gs.mc(gs.mc(gSobject.urlImage,"toUpperCase",[]),"endsWith",[it]);
+    }]));
+  }
+  gSobject['equals'] = function(other) {
+    return (gs.instanceOf(other, "Framework")) && (gs.equals(gs.gp(other,"name"), gs.gp(gs.thisOrObject(this,gSobject),"name")));
+  }
+  gSobject['githubUrl'] = function(it) {
+    return gs.mc(gSobject.url,"contains",["github.com"]);
+  }
+  gSobject['validate'] = function(it) {
+    var validationErrors = gs.list([]);
+    if (!gs.bool(gSobject.name)) {
+      gs.mc(validationErrors,'leftShift', gs.list(["Missing name framework"]));
+    };
+    if (!gs.bool(gSobject.url)) {
+      gs.mc(validationErrors,'leftShift', gs.list(["Missing url framework"]));
+    };
+    if ((gs.bool(gSobject.url)) && (!gs.bool(gs.mc(gSobject,"validUrl",[gSobject.url])))) {
+      gs.mc(validationErrors,'leftShift', gs.list(["Wrong url framework"]));
+    };
+    if ((gs.bool(gSobject.urlImage)) && (!gs.bool(gs.mc(gSobject,"validUrl",[gSobject.urlImage])))) {
+      gs.mc(validationErrors,'leftShift', gs.list(["Wrong url image"]));
+    };
+    if (gs.mc(gs.list([gSobject.name , gSobject.url , gSobject.urlImage]),"any",[gSobject.hasEvilChars])) {
+      gs.mc(validationErrors,'leftShift', gs.list(["Wrong chars"]));
+    };
+    return validationErrors;
+  }
+  gSobject['validUrl'] = function(url) {
+    return gs.mc(gs.list(["http://" , "https://"]),"any",[function(it) {
+      return (gs.bool(url)) && (gs.mc(url,"startsWith",[it]));
+    }]);
+  }
+  if (arguments.length == 1) {gs.passMapToObject(arguments[0],gSobject);};
+  
+  return gSobject;
+};
 function FrameworksPresenter() {
   var gSobject = gs.inherit(gs.baseClass,'FrameworksPresenter');
   gSobject.clazz = { name: 'frameworks.FrameworksPresenter', simpleName: 'FrameworksPresenter'};
@@ -7,9 +56,8 @@ function FrameworksPresenter() {
   gSobject.urlImageFramework = null;
   gSobject.gQuery = null;
   gSobject['onLoad'] = function(it) {
-    var binder = Binder();
-    gSobject.gQuery = gs.gp(binder,"gQuery");
-    return (binder.delegate!=undefined?gs.applyDelegate(binder,binder.delegate,[this]):gs.executeCall(binder, [this]));
+    gSobject.gQuery = GQueryImpl();
+    return gs.mc(gSobject.gQuery,"bindAll",[this]);
   }
   gSobject.htmlFrameworks = function(x0) { return FrameworksPresenter.htmlFrameworks(x0); }
   gSobject.htmlFramework = function(x0) { return FrameworksPresenter.htmlFramework(x0); }
@@ -42,19 +90,19 @@ function FrameworksPresenter() {
   return gSobject;
 };
 FrameworksPresenter.htmlFrameworks = function(frameworks) {
-  return gs.mc(HtmlBuilder,"build",[function(it) {
+  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
     return gs.mc(FrameworksPresenter,"ul",[gs.map().add("id","listFrameworks"), function(it) {
       return gs.mc(frameworks,"each",[function(framework) {
-        return gs.mc(FrameworksPresenter,"yield",[gs.mc(FrameworksPresenter,"htmlFramework",[framework])]);
+        return gs.mc(FrameworksPresenter,"yieldUnescaped",[gs.mc(FrameworksPresenter,"htmlFramework",[framework])]);
       }]);
     }]);
   }]);
 }
 FrameworksPresenter.htmlFramework = function(framework) {
-  return gs.mc(HtmlBuilder,"build",[function(it) {
+  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
     return gs.mc(FrameworksPresenter,"li",[function(it) {
       gs.mc(FrameworksPresenter,"div",[gs.map().add("class","logo").add("data-anijs","if: mouseenter, do: flip animated"), function(it) {
-        if ((!gs.mc(framework,"hasImage",[])) && (gs.mc(framework,"githubUrl",[]))) {
+        if ((!gs.bool(gs.mc(framework,"hasImage",[]))) && (gs.mc(framework,"githubUrl",[]))) {
           return gs.mc(FrameworksPresenter,"img",[gs.map().add("src","images/github.png")]);
         } else {
           return gs.mc(FrameworksPresenter,"img",[gs.map().add("src",(gs.mc(framework,"hasImage",[]) ? gs.gp(framework,"urlImage") : "images/nologo.png"))]);
@@ -64,53 +112,3 @@ FrameworksPresenter.htmlFramework = function(framework) {
     }]);
   }]);
 }
-
-function Framework() {
-  var gSobject = gs.inherit(gs.baseClass,'Framework');
-  gSobject.clazz = { name: 'frameworks.Framework', simpleName: 'Framework'};
-  gSobject.clazz.superclass = { name: 'java.lang.Object', simpleName: 'Object'};
-  gSobject.name = null;
-  gSobject.url = null;
-  gSobject.urlImage = null;
-  gSobject.hasEvilChars = function(data) {
-    return (gs.bool(data) ? gs.mc(data,"indexOf",["<"]) >= 0 : false);
-  };
-  gSobject['hasImage'] = function(it) {
-    return (gs.bool(gSobject.urlImage)) && (gs.mc(gs.list([".GIF" , ".PNG" , ".JPG"]),"any",[function(it) {
-      return gs.mc(gs.mc(gSobject.urlImage,"toUpperCase",[]),"endsWith",[it]);
-    }]));
-  }
-  gSobject['equals'] = function(other) {
-    return (gs.instanceOf(other, "Framework")) && (gs.equals(gs.gp(other,"name"), gs.gp(gs.thisOrObject(this,gSobject),"name")));
-  }
-  gSobject['githubUrl'] = function(it) {
-    return gs.mc(gSobject.url,"contains",["github.com"]);
-  }
-  gSobject['validate'] = function(it) {
-    var validationErrors = gs.list([]);
-    if (!gs.bool(gSobject.name)) {
-      gs.mc(validationErrors,'leftShift', gs.list(["Missing name framework"]));
-    };
-    if (!gs.bool(gSobject.url)) {
-      gs.mc(validationErrors,'leftShift', gs.list(["Missing url framework"]));
-    };
-    if ((gs.bool(gSobject.url)) && (!gs.mc(gSobject,"validUrl",[gSobject.url]))) {
-      gs.mc(validationErrors,'leftShift', gs.list(["Wrong url framework"]));
-    };
-    if ((gs.bool(gSobject.urlImage)) && (!gs.mc(gSobject,"validUrl",[gSobject.urlImage]))) {
-      gs.mc(validationErrors,'leftShift', gs.list(["Wrong url image"]));
-    };
-    if (gs.mc(gs.list([gSobject.name , gSobject.url , gSobject.urlImage]),"any",[gSobject.hasEvilChars])) {
-      gs.mc(validationErrors,'leftShift', gs.list(["Wrong chars"]));
-    };
-    return validationErrors;
-  }
-  gSobject['validUrl'] = function(url) {
-    return gs.mc(gs.list(["http://" , "https://"]),"any",[function(it) {
-      return (gs.bool(gSobject.url)) && (gs.mc(gSobject.url,"startsWith",[it]));
-    }]);
-  }
-  if (arguments.length == 1) {gs.passMapToObject(arguments[0],gSobject);};
-  
-  return gSobject;
-};
