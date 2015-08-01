@@ -1,12 +1,10 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
-        mavenLocal()
     }
     dependencies {
         classpath "io.ratpack:ratpack-gradle:0.9.18"
-        classpath 'org.grooscript:grooscript-gradle-plugin:1.2.0-SNAPSHOT'
+        classpath 'org.grooscript:grooscript-gradle-plugin:1.2.0'
     }
 }
 
@@ -16,13 +14,12 @@ apply plugin: "idea"
 
 repositories {
     jcenter()
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     runtime "org.slf4j:slf4j-simple:1.7.12"
-    compile('org.grooscript:grooscript:1.2.0-SNAPSHOT') {
+    compile('org.grooscript:grooscript:1.2.0') {
         exclude module: 'groovy'
         exclude module: 'groovy-json'
     }

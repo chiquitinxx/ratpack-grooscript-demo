@@ -8,7 +8,7 @@ class FrameworksDb {
     private static final INITIAL_FRAMEWORKS = [
             new Framework(name: 'Grails', url: 'http://grails.org', urlImage: 'http://www.groovy.mn/static/yRPl4fzqI6siNjj2L8OfwDYV6F3S5nx81YszgJkOLv0.png'),
             new Framework(name: 'Gradle', url: 'http://gradle.org', urlImage: 'http://2.bp.blogspot.com/-7gtrqKppoSc/VMz0XOw34kI/AAAAAAAAHgA/KG-nGwcbgQ0/s1600/gradle.png'),
-            new Framework(name: 'Griffon', url: 'http://griffon.codehaus.org', urlImage: 'https://asset-2.kenai.com/attachments/images/project/griffon-1.png'),
+            new Framework(name: 'Griffon', url: 'http://griffon-framework.org', urlImage: 'https://asset-2.kenai.com/attachments/images/project/griffon-1.png'),
     ]
     private static List<Framework> frameworks
 
