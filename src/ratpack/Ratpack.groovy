@@ -1,6 +1,4 @@
-import frameworks.Framework
-import frameworks.FrameworksDb
-import frameworks.FrameworksPresenter
+import frameworks.*
 import ratpack.form.Form
 import ratpack.groovy.template.MarkupTemplateModule
 
@@ -15,8 +13,8 @@ ratpack {
 
     handlers {
         get {
-            def list = FrameworksPresenter.htmlFrameworks(FrameworksDb.listFrameworks)
-            render groovyMarkupTemplate([frameworks: list], "index.gtpl")
+            def htmlFrameworks = FrameworksView.htmlFrameworks(FrameworksDb.listFrameworks)
+            render groovyMarkupTemplate([htmlFrameworks: htmlFrameworks], "index.gtpl")
         }
 
         post('addFramework') {

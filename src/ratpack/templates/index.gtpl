@@ -39,7 +39,7 @@ html {
     }
 
 	section {
-    	div model.frameworks
+    	div model.htmlFrameworks
 	}
 
 	script(src:"lib/anijs-min.js") {}
@@ -49,7 +49,7 @@ html {
     script {
     	yield '''
 			jQuery(document).ready(function() {
-                FrameworksPresenter().onLoad();
+                FrameworksPresenter({gQuery: GQueryImpl()}).start();
             });
     	'''
     }

@@ -1,3 +1,52 @@
+function FrameworksView() {
+  var gSobject = gs.inherit(gs.baseClass,'FrameworksView');
+  gSobject.clazz = { name: 'frameworks.FrameworksView', simpleName: 'FrameworksView'};
+  gSobject.clazz.superclass = { name: 'java.lang.Object', simpleName: 'Object'};
+  gSobject.clazz.interfaces = [{ name: 'frameworks.View', simpleName: 'View'}];
+  gSobject.frameworksListSelector = "#listFrameworks";
+  gSobject.errorSelector = "#validationError";
+  gSobject.htmlFrameworks = function(x0) { return FrameworksView.htmlFrameworks(x0); }
+  gSobject.htmlFramework = function(x0) { return FrameworksView.htmlFramework(x0); }
+  gSobject['addNewFramework'] = function(framework) {
+    return gs.mc(gSobject,"append",[gSobject.frameworksListSelector, FrameworksView.htmlFramework(framework)]);
+  }
+  gSobject['putError'] = function(errorMessage) {
+    return gs.mc(gSobject,"putHtml",[gSobject.errorSelector, errorMessage]);
+  }
+  gSobject.putHtml = function(selector, html) {
+    $(selector).html(html);
+  }
+  gSobject.append = function(selector, html) {
+    $(selector).append(html);
+        AniJS.run();
+  }
+  if (arguments.length == 1) {gs.passMapToObject(arguments[0],gSobject);};
+  
+  return gSobject;
+};
+FrameworksView.htmlFrameworks = function(frameworks) {
+  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
+    return gs.mc(FrameworksView,"ul",[gs.map().add("id","listFrameworks"), function(it) {
+      return gs.mc(frameworks,"each",[function(framework) {
+        return gs.mc(FrameworksView,"yieldUnescaped",[gs.mc(FrameworksView,"htmlFramework",[framework])]);
+      }]);
+    }]);
+  }]);
+}
+FrameworksView.htmlFramework = function(framework) {
+  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
+    return gs.mc(FrameworksView,"li",[function(it) {
+      gs.mc(FrameworksView,"div",[gs.map().add("class","logo").add("data-anijs","if: mouseenter, do: flip animated"), function(it) {
+        if ((!gs.bool(gs.mc(framework,"hasImage",[]))) && (gs.mc(framework,"githubUrl",[]))) {
+          return gs.mc(FrameworksView,"img",[gs.map().add("src","images/github.png")]);
+        } else {
+          return gs.mc(FrameworksView,"img",[gs.map().add("src",(gs.mc(framework,"hasImage",[]) ? gs.gp(framework,"urlImage") : "images/nologo.png"))]);
+        };
+      }]);
+      return gs.mc(FrameworksView,"a",[gs.map().add("href",gs.gp(framework,"url")), gs.gp(framework,"name")]);
+    }]);
+  }]);
+}
 function Framework() {
   var gSobject = gs.inherit(gs.baseClass,'Framework');
   gSobject.clazz = { name: 'frameworks.Framework', simpleName: 'Framework'};
@@ -55,31 +104,24 @@ function FrameworksPresenter() {
   gSobject.urlFramework = null;
   gSobject.urlImageFramework = null;
   gSobject.gQuery = null;
-  gSobject['onLoad'] = function(it) {
-    gSobject.gQuery = GQueryImpl();
-    return gs.mc(gSobject.gQuery,"bindAll",[this]);
+  gSobject.view = null;
+  gSobject['start'] = function(it) {
+    gs.mc(gSobject.gQuery,"bindAll",[this]);
+    if (!gs.bool(gSobject.view)) {
+      return gSobject.view = FrameworksView();
+    };
   }
-  gSobject.htmlFrameworks = function(x0) { return FrameworksPresenter.htmlFrameworks(x0); }
-  gSobject.htmlFramework = function(x0) { return FrameworksPresenter.htmlFramework(x0); }
   gSobject['buttonAddFrameworkClick'] = function(it) {
     var framework = Framework(gs.map().add("name",gSobject.nameFramework).add("url",gSobject.urlFramework).add("urlImage",gSobject.urlImageFramework));
     var errors = gs.mc(framework,"validate",[]);
     if (!gs.bool(errors)) {
       gs.mc(gSobject,"addFramework",[framework, function(newFramework) {
-        return gs.mc(gSobject,"append",["#listFrameworks", gs.mc(this,"htmlFramework",[newFramework], gSobject)]);
+        return gs.mc(gSobject.view,"addNewFramework",[newFramework]);
       }, function(error) {
-        return gs.mc(gSobject,"putHtml",["#validationError", "Error from server!"]);
+        return gs.mc(gSobject.view,"putError",[gs.plus("Error from server: ", error)]);
       }]);
     };
-    return gs.mc(gSobject,"putHtml",["#validationError", gs.mc(errors,"join",[" - "])]);
-  }
-  gSobject.putHtml = function(selector, html) {
-    $(selector).html(html);
-        AniJS.run();
-  }
-  gSobject.append = function(selector, html) {
-    $(selector).append(html);
-        AniJS.run();
+    return gs.mc(gSobject.view,"putError",[gs.mc(errors,"join",[" - "])]);
   }
   gSobject['addFramework'] = function(framework, onAdded, onError) {
     if (onError === undefined) onError = null;
@@ -89,26 +131,3 @@ function FrameworksPresenter() {
   
   return gSobject;
 };
-FrameworksPresenter.htmlFrameworks = function(frameworks) {
-  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
-    return gs.mc(FrameworksPresenter,"ul",[gs.map().add("id","listFrameworks"), function(it) {
-      return gs.mc(frameworks,"each",[function(framework) {
-        return gs.mc(FrameworksPresenter,"yieldUnescaped",[gs.mc(FrameworksPresenter,"htmlFramework",[framework])]);
-      }]);
-    }]);
-  }]);
-}
-FrameworksPresenter.htmlFramework = function(framework) {
-  return gs.execStatic(HtmlBuilder,'build', this,[function(it) {
-    return gs.mc(FrameworksPresenter,"li",[function(it) {
-      gs.mc(FrameworksPresenter,"div",[gs.map().add("class","logo").add("data-anijs","if: mouseenter, do: flip animated"), function(it) {
-        if ((!gs.bool(gs.mc(framework,"hasImage",[]))) && (gs.mc(framework,"githubUrl",[]))) {
-          return gs.mc(FrameworksPresenter,"img",[gs.map().add("src","images/github.png")]);
-        } else {
-          return gs.mc(FrameworksPresenter,"img",[gs.map().add("src",(gs.mc(framework,"hasImage",[]) ? gs.gp(framework,"urlImage") : "images/nologo.png"))]);
-        };
-      }]);
-      return gs.mc(FrameworksPresenter,"a",[gs.map().add("href",gs.gp(framework,"url")), gs.gp(framework,"name")]);
-    }]);
-  }]);
-}
