@@ -4,34 +4,25 @@ html {
     meta(charset:'utf-8')
     title("Ratpack grooscript demo")
 
-    meta(name: 'apple-mobile-web-app-title', content: 'Ratpack grooscript demo')
-    meta(name: 'description', content: '')
-    meta(name: 'viewport', content: 'width=device-width, initial-scale=1')
-
     link(href: 'styles/style.css', type: "text/css", rel: 'stylesheet')
     link(href: 'styles/animate.css', type: "text/css", rel: 'stylesheet')
-    script(src:"lib/jquery-1.11.1.min.js") {}
   }
+// tag::doc[]
   body {
-    section {
+    head {
       	div(id: "newFramework") {
-		  p {
-			yield 'Name:'
-			input(type: 'text', id: 'nameFramework')
-			yield '*'
+		  p { //<1>
+			yield 'Name:';input(type: 'text', id: 'nameFramework');yield '*'
 		  }
 		  p {
-			yield 'Url framework:'
-			input(type: 'text', id: 'urlFramework')
-			yield '*'
+			yield 'Url framework:';input(type: 'text', id: 'urlFramework');yield '*'
 		  }
 		  p {
-			yield 'Url image framework:'
-			input(type: 'text', id: 'urlImageFramework')
+			yield 'Url image framework:';input(type: 'text', id: 'urlImageFramework')
 		  }
 		  input(type:"button", class:"doButton", id:"buttonAddFramework", value:"Add framework",
-				 'data-anijs': "if: mousedown, do: shake animated, to: #validationError") {}
-		  div(id: "validationError") {}
+				 'data-anijs': "if: mousedown, do: shake animated, to: #validationError") {} //<2>
+		  div(id: "validationError") {} //<3>
 		  div(id: "mainTitle", 'data-anijs':"if: mouseenter, do: tada animated") {
 			yield 'Groovy Frameworks'
 		  }
@@ -39,19 +30,20 @@ html {
     }
 
 	section {
-    	div model.htmlFrameworks
+    	div model.htmlFrameworks //<4>
 	}
 
-	script(src:"lib/anijs-min.js") {}
-	script(src:"lib/grooscript.min.js") {}
-	script(src:"lib/grooscript-tools.js") {}
-	script(src:"scripts/FrameworksPresenter.js") {}
-    script {
+	["lib/jquery-1.11.1.min.js", "lib/anijs-min.js", "lib/grooscript.min.js",
+		"lib/grooscript-tools.js", "scripts/FrameworksPresenter.js"].each {
+		script(src: it) {} //<5>
+	}
+	script {
     	yield '''
 			jQuery(document).ready(function() {
-                FrameworksPresenter({gQuery: GQueryImpl()}).start();
+                FrameworksPresenter({gQuery: GQueryImpl()}).start(); //<6>
             });
     	'''
     }
   }
+// end::doc[]
 }

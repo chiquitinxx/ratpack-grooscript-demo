@@ -1,0 +1,117 @@
+= Using link:index.html[grooscript] with http://ratpack.io[Ratpack]
+
+There is no special integration support for Ratpack, just with the https://github.com/chiquitinxx/grooscript-gradle-plugin[grooscript gradle plugin]
+you can convert your groovy files to javascript and use in your browser. You can use this
+plugin with any other framework or library, for example https://grails.org/[Grails].
+
+The source code of this demo is available in https://github.com/chiquitinxx/ratpack-grooscript-demo[github]. A similar
+application done with http://projects.spring.io/spring-boot/[Spring Boot] is deployed in http://ecosystem-gr8.rhcloud.com/, and
+the source code also https://github.com/chiquitinxx/springboot-rest-demo[here]. This is my first application using
+Ratpack, any pull request to improve it is more than welcome. I don't use any database, only a little static class
+with the frameworks added.
+
+Is a single page, to see a list of groovy libraries o frameworks. You can add new frameworks
+filling at least name and url, can include link to external image for logo.
+
+image::img/frameworks.png[Demo]
+
+== Setup
+
+I'm using Ratpack gradle plugin, and I have added grooscript gradle plugin in +build.gradle+:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../build.gradle[tags=doc,indent=0]
+--
+<1> The groovy file that will be converted to javascript.
+<2> Folder where FrameworksPresenter.js will be saved.
+<3> Classpath needed to compile groovy file.
+<4> If you use any other groovy class in FrameworksPresenter.groovy, that classes will be converted too, and added to .js file.
+<5> While Ratpack application is running in development, any modification done in FrameworksPresenter.groovy, will convert a new .js file.
+
+== Ratpack server
+
+The server does two things, serve the index page, and add the new frameworks to the database.
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../src/ratpack/Ratpack.groovy[indent=0]
+--
+<1> Module to use groovy template engine.
+<2> Get the html of all the frameworks in the 'database'.
+<3> Render the groovy template, sending the frameworks html.
+<4> Validate the framework in the server.
+<5> Send the validated framework back to client.
+<6> Location of static files (css, js, ...).
+
+== Index page
+
+For more info about groovy templates engine go http://docs.groovy-lang.org/latest/html/documentation/template-engines.html[here].
+Our index page `index.gtpl`:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../src/ratpack/templates/index.gtpl[tags=doc,indent=0]
+--
+<1> New framework input fields.
+<2> Button to validate the input fields and send to the server.
+<3> Where validation and error messages are shown.
+<4> Draw the frameworks list html from the model passed to the template.
+<5> Javascript libraries needed.
+<6> Javascript code to start the presenter.
+
+Anijs is used for nice animations, jQuery is used by grooscript-tools to do jQuery stuff,
+FrameworksPresenter.js is the javascript conversion of FrameworksPresenter.groovy and finally
+*grooscript.js* is needed to run any javascript code converted by grooscript.
+
+== Source code
+
+I'm using a MVP pattern for this little application. Is groovy code that will run in the client
+side, as javascript code. You can run the code in groovy and test it with any java / groovy
+test framework. Now I'll show all the source code, the code itself is not important, the
+important thing is that *is groovy and is running in your browser*.
+
+The logic on my application is in `FrameworksPresenter.groovy`:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../src/main/groovy/frameworks/FrameworksPresenter.groovy[indent=0]
+--
+GQuery comes with grooscript, and is a wrap to work with jQuery.
+
+The presenter connects with the view `FrameworksView.groovy`:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../src/main/groovy/frameworks/FrameworksView.groovy[indent=0]
+--
+We use another grooscript feature, HtmlBuilder to create html code with a DSL, and it works
+in groovy and in javascript importing grooscript-tools.js. Also you can see I'm inserting
+javascript code with @GsNative.
+
+Finally the framework class with validations included, validations that are used in the
+server and in the client side, without repeating code.
+
+[source,groovy]
+[subs="verbatim,attributes"]
+--
+include::../../src/main/groovy/frameworks/Framework.groovy[indent=0]
+--
+
+To play with grooscript, clone the source code and run with `> ./gradlew run`. Now you can modify the source groovy files,
+each time you update that file, the .js file will be generated again, and you can reload the page `http://localhost:5050/` to see the changes.
+
+== Beyond this demo
+
+Take a look at http://grooscript.org/doc.html[grooscript documentation] to check what is supported by grooscript.
+
+The grooscript gradle plugin has more features, as work with groovy templates in the browser,
+or create http://requirejs.org[Require.js] modules, or notify the server file changes using websockets. You
+can follow http://grooscript.org/starting_gradle.html[this] getting starting guide to understand better grooscript and the gradle plugin.
+
+Visit http://grooscript.org[grooscript.org] for more info. Thank you for your time!

@@ -3,9 +3,6 @@ package frameworks
 import org.grooscript.asts.GsNative
 import org.grooscript.builder.HtmlBuilder
 
-/**
- * Created by jorgefrancoleza on 30/9/15.
- */
 class FrameworksView implements View {
 
     String frameworksListSelector = '#listFrameworks'

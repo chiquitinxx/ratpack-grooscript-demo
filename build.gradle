@@ -3,18 +3,18 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.2"
         classpath "io.ratpack:ratpack-gradle:1.0.0"
         classpath 'org.grooscript:grooscript-gradle-plugin:1.2.1'
     }
 }
-
+// tag::doc[]
 apply plugin: 'org.grooscript.conversion'
 apply plugin: "io.ratpack.ratpack-groovy"
 apply plugin: "idea"
 
 repositories {
     jcenter()
-    mavenCentral()
 }
 
 dependencies {
@@ -32,10 +32,25 @@ task wrapper(type: Wrapper) {
 }
 
 grooscript {
-    source = ['src/main/groovy/frameworks/FrameworksPresenter.groovy']
-    destination = 'src/ratpack/public/scripts'
-    classpath = ['src/main/groovy']
-    includeDependencies = true
+    source = ['src/main/groovy/frameworks/FrameworksPresenter.groovy'] //<1>
+    destination = 'src/ratpack/public/scripts' //<2>
+    classpath = ['src/main/groovy'] //<3>
+    includeDependencies = true //<4>
 }
 
-run.dependsOn convertThread
+run.dependsOn convertThread //<5>
+// end::doc[]
+apply plugin: "org.asciidoctor.convert"
+
+asciidoctor {
+    sourceDir = project.file 'src/doc'
+    sources { include 'ratpack-demo.adoc' }
+    attributes 'grooscript-version': '1.2.1',
+            'gradle-plugin-version': '1.2.1',
+            'gradle-version': '2.7',
+            author: 'Jorge Franco',
+            email: 'grooscript@gmail.com',
+            'source-highlighter': 'prettify',
+            icons: 'font',
+            'index-file': 'index.html'
+}

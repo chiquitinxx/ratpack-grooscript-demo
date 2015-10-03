@@ -2,9 +2,6 @@ package frameworks
 
 import org.grooscript.jquery.GQuery
 
-/**
- * Created by jorge on 01/08/14.
- */
 class FrameworksPresenter {
 
     String nameFramework

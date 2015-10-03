@@ -57,17 +57,6 @@ function Framework() {
   gSobject.hasEvilChars = function(data) {
     return (gs.bool(data) ? gs.mc(data,"indexOf",["<"]) >= 0 : false);
   };
-  gSobject['hasImage'] = function(it) {
-    return (gs.bool(gSobject.urlImage)) && (gs.mc(gs.list([".GIF" , ".PNG" , ".JPG"]),"any",[function(it) {
-      return gs.mc(gs.mc(gSobject.urlImage,"toUpperCase",[]),"endsWith",[it]);
-    }]));
-  }
-  gSobject['equals'] = function(other) {
-    return (gs.instanceOf(other, "Framework")) && (gs.equals(gs.gp(other,"name"), gs.gp(gs.thisOrObject(this,gSobject),"name")));
-  }
-  gSobject['githubUrl'] = function(it) {
-    return gs.mc(gSobject.url,"contains",["github.com"]);
-  }
   gSobject['validate'] = function(it) {
     var validationErrors = gs.list([]);
     if (!gs.bool(gSobject.name)) {
@@ -87,10 +76,21 @@ function Framework() {
     };
     return validationErrors;
   }
+  gSobject['hasImage'] = function(it) {
+    return (gs.bool(gSobject.urlImage)) && (gs.mc(gs.list([".GIF" , ".PNG" , ".JPG"]),"any",[function(it) {
+      return gs.mc(gs.mc(gSobject.urlImage,"toUpperCase",[]),"endsWith",[it]);
+    }]));
+  }
+  gSobject['githubUrl'] = function(it) {
+    return gs.mc(gSobject.url,"contains",["github.com"]);
+  }
   gSobject['validUrl'] = function(url) {
     return gs.mc(gs.list(["http://" , "https://"]),"any",[function(it) {
       return (gs.bool(url)) && (gs.mc(url,"startsWith",[it]));
     }]);
+  }
+  gSobject['equals'] = function(other) {
+    return (gs.instanceOf(other, "Framework")) && (gs.equals(gs.gp(other,"name"), gs.gp(gs.thisOrObject(this,gSobject),"name")));
   }
   if (arguments.length == 1) {gs.passMapToObject(arguments[0],gSobject);};
   
